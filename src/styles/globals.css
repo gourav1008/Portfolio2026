@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        color-scheme: dark;
+    }
+
+    body {
+        @apply bg-void text-white overflow-x-hidden;
+        font-family: var(--font-inter), sans-serif;
+    }
+}
+
+@layer utilities {
+    .glass-effect {
+        @apply bg-glass-20 border border-glass-border;
+        backdrop-filter: blur(16px);
+    }
+
+    .neon-glow {
+        box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+}
