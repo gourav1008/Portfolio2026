@@ -57,7 +57,7 @@ export default function Home() {
                 {/* Section 1: Hero (Handled by HUD TypingHeader) */}
                 <section id="hero" className={`${isMobile ? 'min-h-screen' : 'h-screen'} pointer-events-none flex justify-center`}>
                     <div className="text-center px-4 sm:px-8 pointer-events-auto hidden lg:block">
-                        <h1 className="text-2xl sm:text-4xl lg:text-6xl font-light mt-40">Welcome to My Portfolio</h1>
+                        <h1 className="text-2xl sm:text-4xl lg:text-5xl font-light mt-40">Welcome to My Portfolio</h1>
                         <p className="text-xs sm:text-base text-gray-400">Explore my projects and skills</p>
                     </div>
                 </section>
