@@ -1,20 +1,18 @@
 import { create } from 'zustand';
 
 interface AppState {
-    isChatOpen: boolean;
     selectedProjectId: string | null;
+    isLoaded: boolean;
 
     // Actions
-    setChatOpen: (isOpen: boolean) => void;
-    toggleChat: () => void;
     setSelectedProjectId: (id: string | null) => void;
+    setIsLoaded: (isLoaded: boolean) => void;
 }
 
 export const useStore = create<AppState>((set) => ({
-    isChatOpen: false,
     selectedProjectId: null,
+    isLoaded: false,
 
-    setChatOpen: (isOpen) => set({ isChatOpen: isOpen }),
-    toggleChat: () => set((state) => ({ isChatOpen: !state.isChatOpen })),
     setSelectedProjectId: (id) => set({ selectedProjectId: id }),
+    setIsLoaded: (isLoaded) => set({ isLoaded }),
 }));

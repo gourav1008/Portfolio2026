@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { useStore } from "@/hooks/useStore";
-import Scene from "@/scenes/MainScene";
-import ProjectModal from "@/components/ui/ProjectModal";
+import dynamic from "next/dynamic";
+import { motion } from "framer-motion";
 import { projectsData } from "@/lib/projectsData";
 import { skillsData } from "@/lib/skillsData";
 
@@ -11,22 +10,34 @@ import HUDOverlay from "@/components/ui/HUDOverlay";
 import WorkshopCard from "@/components/ui/WorkshopCard";
 import ContactForm from "@/components/ui/ContactForm";
 import AboutCard from "@/components/ui/AboutCard";
+import ProjectsSection from "@/components/ui/ProjectsSection";
 
-import AIChatInterface from "@/components/ui/AIChatInterface";
-import AIChatButton from "@/components/ui/AIChatButton";
+// Lazy load heavy components for better performance
+const Scene = dynamic(() => import("@/scenes/MainScene"), {
+    ssr: false,
+    loading: () => <div className="fixed inset-0 bg-void" />
+});
+
+const ProjectModal = dynamic(() => import("@/components/ui/ProjectModal"), {
+    ssr: false
+});
+
 
 export default function Home() {
-    const { selectedProjectId, setSelectedProjectId, isChatOpen, setChatOpen } = useStore();
+    const { selectedProjectId, isLoaded } = useStore();
 
     const selectedProject = selectedProjectId
         ? projectsData.find(p => p.id === selectedProjectId) || null
         : null;
 
     return (
-        <main className="relative w-full min-h-screen bg-void text-white">
+        <motion.main
+            className="relative w-full min-h-screen bg-void text-white"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isLoaded ? 1 : 0 }}
+            transition={{ duration: 1 }}
+        >
             <HUDOverlay />
-            <AIChatInterface />
-            <AIChatButton />
 
             {/* 3D Scene Background (Fixed) */}
             <div className="fixed inset-0 z-[5]">
@@ -38,7 +49,7 @@ export default function Home() {
                 project={selectedProject}
             />
 
-            {/* Scrollable Content Overlay */}
+            {/* Main Content - Fades in after loader */}
             <div className="relative z-[15] w-full">
 
                 {/* Section 1: Hero (Handled by HUD TypingHeader) */}
@@ -52,23 +63,14 @@ export default function Home() {
                 </section>
 
                 {/* Section 3: Skills (Handled by 3D Scene) */}
-                <section id="skills" className="h-screen flex items-center justify-end px-8 md:px-20 pointer-events-none">
+                <section id="skills" className="h-screen flex items-center justify-end px-8 md:px-20 md:mr-10 pointer-events-none">
                     <div className="text-right max-w-md pointer-events-auto">
                         <WorkshopCard />
                     </div>
                 </section>
 
-                {/* Section 4: Projects (Handled by 3D Scene) */}
-                <section id="work" className="h-screen flex items-center justify-center pointer-events-none">
-                    <div className="text-center pointer-events-auto">
-                        <h2 className="font-display text-5xl md:text-7xl font-bold text-white mb-6">
-                            FEATURED <span className="text-neon-cyan">PROJECTS</span>
-                        </h2>
-                        <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-                            Explore my work through interactive 3D hologram cards. Click on any project to learn more.
-                        </p>
-                    </div>
-                </section>
+                {/* Section 4: Projects */}
+                <ProjectsSection />
 
                 {/* Section 5: Contact */}
                 <section id="contact" className="h-screen flex items-center justify-center pointer-events-none">
@@ -115,6 +117,6 @@ export default function Home() {
                 </ul>
             </section>
 
-        </main>
+        </motion.main>
     );
 }

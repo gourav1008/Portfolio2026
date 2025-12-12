@@ -34,7 +34,7 @@ export default function NavIcons() {
                     onClick={() => scrollToSection(item.id)}
                     className="group relative p-3 rounded-full bg-glass-10 border border-white/10 hover:border-neon-cyan/50 hover:bg-neon-cyan/10 transition-colors backdrop-blur-md"
                 >
-                    <item.icon className="w-6 h-6 text-gray-400 group-hover:text-neon-cyan transition-colors" />
+                    <item.icon className="w-8 h-8 text-gray-400 group-hover:text-neon-cyan transition-colors" />
 
                     {/* Tooltip */}
                     <span className="absolute right-full mr-4 top-1/2 -translate-y-1/2 px-3 py-1 rounded-md bg-black/80 text-white text-xs font-mono opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none border border-white/10">

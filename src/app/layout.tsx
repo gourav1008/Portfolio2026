@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Rajdhani } from "next/font/google";
+import CinematicLoaderWrapper from "@/components/ui/CinematicLoaderWrapper";
 import "../styles/globals.css";
-import CinematicLoader from "@/components/ui/CinematicLoader";
 
 import { profileData } from "@/lib/profileData";
 
@@ -39,7 +39,7 @@ export default function RootLayout({
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
             </head>
             <body className={`${inter.variable} ${rajdhani.variable} antialiased`}>
-                <CinematicLoader />
+                <CinematicLoaderWrapper />
                 {children}
             </body>
         </html>

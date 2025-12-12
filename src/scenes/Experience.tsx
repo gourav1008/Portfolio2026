@@ -5,10 +5,9 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import * as THREE from "three";
-import HologramCard from "@/components/3d/HologramCard";
-import HeroObject from "@/components/3d/HeroObject";
+
+import SolarSystemBackground from "@/components/3d/SolarSystemBackground";
 import SkillsHologram from "@/components/3d/SkillsHologram";
-import FloatingDebris from "@/components/3d/FloatingDebris";
 import { projectsData } from "@/lib/projectsData";
 
 export default function Experience({ onProjectClick, dpr = 1.5 }: { onProjectClick?: (projectId: string) => void, dpr?: number }) {
@@ -17,11 +16,9 @@ export default function Experience({ onProjectClick, dpr = 1.5 }: { onProjectCli
     const timeline = useRef<gsap.core.Timeline | null>(null);
 
     // Refs for objects to animate
+    // Refs for objects to animate
     const heroRef = useRef<THREE.Group>(null);
     const projectsGroupRef = useRef<THREE.Group>(null);
-
-    // Adjust debris count based on performance (dpr)
-    const debrisCount = dpr < 1 ? 100 : 300;
 
     useLayoutEffect(() => {
         timeline.current = gsap.timeline({
@@ -30,27 +27,25 @@ export default function Experience({ onProjectClick, dpr = 1.5 }: { onProjectCli
         });
 
         // Initial Camera State (Hero)
-        // Position: [0, 2, 8], LookAt: [0, 0, 0]
+        // Position: [0, 3, 18], LookAt: [0, 0, 0] - Zoomed closer view of Solar System
 
         // 0 -> 0.33 (Hero to Skills)
         timeline.current
             .to(camera.position, {
-                x: 5,
+                x: 0,
                 y: 0,
-                z: 5,
+                z: 6, // Very close-up view of skills hologram
                 duration: 1
             }, 0)
             .to(camera.rotation, {
-                // Approximate rotation for looking at 0,0,0 from 5,0,5
-                // We'll use lookAt in useFrame for precision, but GSAP helps interpolate
             }, 0);
 
         // 0.33 -> 0.66 (Skills to Projects)
         timeline.current
             .to(camera.position, {
                 x: 0,
-                y: -2,
-                z: 10, // Camera positioned for better card grid view
+                y: -5,
+                z: 30, // Keep distance to see background
                 duration: 1
             }, 1);
 
@@ -105,61 +100,21 @@ export default function Experience({ onProjectClick, dpr = 1.5 }: { onProjectCli
         <>
 
 
-            {/* Instanced Debris for Performance Demo */}
-            <FloatingDebris count={debrisCount} />
-
-            {/* Hero Object (Visible in Section 1) */}
+            {/* Solar System Background (Visible in Section 1) */}
             <group ref={heroRef}>
-                <HeroObject />
+                <SolarSystemBackground />
             </group>
 
 
 
-            {/* Skills Placeholder (Section 2) */}
+            {/* Skills Hologram (Section 2) - Centered with Sun */}
             <group position={[0, 0, 0]} visible={true}>
                 <SkillsHologram />
             </group>
 
-            {/* Projects Gallery (Section 3) */}
+            {/* Projects Gallery (Section 3) - Handled by DOM ProjectCards now */}
             <group ref={projectsGroupRef} position={[0, 0, 0]}>
-                {/* DEBUG MESH */}
-                <mesh position={[0, 0, 0]}>
-                    <boxGeometry args={[1, 1, 1]} />
-                    <meshBasicMaterial color="red" wireframe />
-                </mesh>
-
-                {projectsData.map((project, index) => {
-                    // 2-row grid layout (3 cards per row)
-                    const row = Math.floor(index / 3); // 0 for top row, 1 for bottom row
-                    const col = index % 3; // 0, 1, 2 for column position
-
-                    const spacing = 4.5; // Space between cards
-                    const x = (col - 1) * spacing; // -4.5, 0, +4.5 for each row
-                    const y = 1.5 - row * 4; // 1.5 for top row, -2.5 for bottom row (centered view)
-                    const z = 0; // Position cards at origin (camera at z=10)
-
-                    return (
-                        <group key={project.id}>
-                            <HologramCard
-                                title={project.title}
-                                description={project.description}
-                                thumbnail={project.thumbnail}
-                                position={[x, y, z]}
-                                rotation={[0, 0, 0]} // Face forward towards camera
-                                onClick={() => onProjectClick?.(project.id)}
-                            />
-                            {/* Test sphere to verify position visibility */}
-                            <mesh key={`sphere-${project.id}`} position={[x, y + 3, z]}>
-                                <sphereGeometry args={[0.3]} />
-                                <meshStandardMaterial
-                                    color="#FF00FF"
-                                    emissive="#FF00FF"
-                                    emissiveIntensity={2}
-                                />
-                            </mesh>
-                        </group>
-                    );
-                })}
+                {/* 3D Projects removed in favor of DOM UI */}
             </group>
         </>
     );

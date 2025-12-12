@@ -12,5 +12,23 @@
     "files": [
       "static/chunks/_app-pages-browser_node_modules_next_dist_client_dev_noop-turbopack-hmr_js.js"
     ]
+  },
+  "app\\page.tsx -> @/components/ui/ProjectModal": {
+    "id": "app\\page.tsx -> @/components/ui/ProjectModal",
+    "files": [
+      "static/chunks/_app-pages-browser_src_components_ui_ProjectModal_tsx.js"
+    ]
+  },
+  "app\\page.tsx -> @/scenes/MainScene": {
+    "id": "app\\page.tsx -> @/scenes/MainScene",
+    "files": [
+      "static/chunks/_app-pages-browser_src_scenes_MainScene_tsx.js"
+    ]
+  },
+  "components\\ui\\CinematicLoaderWrapper.tsx -> ./CinematicLoader": {
+    "id": "components\\ui\\CinematicLoaderWrapper.tsx -> ./CinematicLoader",
+    "files": [
+      "static/chunks/_app-pages-browser_src_components_ui_CinematicLoader_tsx.js"
+    ]
   }
 }

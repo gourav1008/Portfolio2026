@@ -26,8 +26,8 @@ export default function WorkshopCard() {
         >
             <div className="relative p-6 rounded-2xl bg-black/80 backdrop-blur-xl border border-white/10 overflow-hidden max-w-md">
                 {/* Glow Effect */}
-                <div className="absolute -top-20 -left-20 w-40 h-40 bg-neon-cyan/30 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-neon-purple/30 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -top-25 -left-25 w-40 h-40 bg-neon-cyan/30 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-25 -right-35 w-40 h-40 bg-neon-purple/30 rounded-full blur-3xl pointer-events-none" />
 
                 <h2 className="font-display text-3xl md:text-5xl font-bold text-white mb-2">
                     TECH <span className="text-neon-cyan">STACK</span>
