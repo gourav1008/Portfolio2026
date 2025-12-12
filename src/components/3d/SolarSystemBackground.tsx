@@ -4,8 +4,11 @@ import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Float, Stars, Trail } from "@react-three/drei";
 import * as THREE from "three";
+import { useScene3D } from "@/hooks/useScene3D";
 
 export default function SolarSystemBackground() {
+    const { config } = useScene3D();
+
     return (
         <group>
             {/* Ambient Stars - Background Layer */}
@@ -14,24 +17,27 @@ export default function SolarSystemBackground() {
             <Stars radius={100} depth={50} count={2000} factor={3} saturation={0} fade speed={1} />
 
             {/* The Sun - Now the center for skill-planets */}
-            <Sun />
+            <Sun sunScale={config.background.sunScale} />
 
             {/* Earth and Moon - Real celestial bodies */}
-            <EarthMoonSystem />
+            <EarthMoonSystem 
+              orbitRadius={config.background.earthOrbitRadius}
+              earthScale={config.background.earthScale}
+            />
 
             {/* Planets removed - Skills now act as orbiting planets */}
         </group>
     );
 }
 
-function Sun() {
+function Sun({ sunScale = 1.0 }: { sunScale: number }) {
     const meshRef = useRef<THREE.Mesh>(null);
     const glowRef = useRef<THREE.Mesh>(null);
 
     useFrame((state) => {
         if (meshRef.current) {
             // Pulsing effect (more subtle)
-            const scale = 1 + Math.sin(state.clock.elapsedTime * 0.5) * 0.01;
+            const scale = sunScale + Math.sin(state.clock.elapsedTime * 0.5) * 0.01 * sunScale;
             meshRef.current.scale.set(scale, scale, scale);
             // Rotation
             meshRef.current.rotation.y += 0.002;
@@ -45,7 +51,7 @@ function Sun() {
         <group>
             {/* Core Sun - More realistic */}
             <mesh ref={meshRef} position={[0, 0, 0]}>
-                <sphereGeometry args={[1.2, 64, 64]} />
+                <sphereGeometry args={[1.2 * sunScale, 64, 64]} />
                 <meshStandardMaterial
                     color="#FFA500"
                     emissive="#FFD700"
@@ -56,13 +62,13 @@ function Sun() {
             </mesh>
 
             {/* Sun Corona/Atmosphere - Reduced */}
-            <mesh ref={glowRef} scale={[1.4, 1.4, 1.4]}>
+            <mesh ref={glowRef} scale={[1.4 * sunScale, 1.4 * sunScale, 1.4 * sunScale]}>
                 <sphereGeometry args={[1.2, 32, 32]} />
                 <meshBasicMaterial color="#FF8C00" transparent opacity={0.2} side={THREE.BackSide} />
             </mesh>
 
             {/* Outer Glow - Reduced to 1.8× (was 3×) */}
-            <mesh scale={[1.8, 1.8, 1.8]}>
+            <mesh scale={[1.8 * sunScale, 1.8 * sunScale, 1.8 * sunScale]}>
                 <sphereGeometry args={[1.2, 32, 32]} />
                 <meshBasicMaterial color="#FF4500" transparent opacity={0.08} side={THREE.BackSide} />
             </mesh>
@@ -75,15 +81,19 @@ function Sun() {
 }
 
 // Earth and Moon Component
-function EarthMoonSystem() {
+function EarthMoonSystem({ 
+  orbitRadius = 2.8, 
+  earthScale = 0.25 
+}: { 
+  orbitRadius: number;
+  earthScale: number;
+}) {
     const earthGroupRef = useRef<THREE.Group>(null);
     const earthRef = useRef<THREE.Mesh>(null);
     const moonRef = useRef<THREE.Group>(null);
 
     // Earth's orbital parameters
-    const orbitRadius = 2.8;
     const orbitSpeed = 0.3;
-    const earthSize = 0.25;
     const moonSize = 0.07;
     const moonOrbitRadius = 0.6;
 
@@ -125,7 +135,7 @@ function EarthMoonSystem() {
                 {/* Earth */}
                 <Float speed={1.5} rotationIntensity={0.1} floatIntensity={0.15}>
                     <mesh ref={earthRef}>
-                        <sphereGeometry args={[earthSize, 32, 32]} />
+                        <sphereGeometry args={[earthScale, 32, 32]} />
                         <meshStandardMaterial
                             color="#1E5F8C"
                             emissive="#2E8BC0"
@@ -137,7 +147,7 @@ function EarthMoonSystem() {
 
                     {/* Earth's Atmosphere */}
                     <mesh scale={1.15}>
-                        <sphereGeometry args={[earthSize, 24, 24]} />
+                        <sphereGeometry args={[earthScale, 24, 24]} />
                         <meshBasicMaterial
                             color="#4A90E2"
                             transparent

@@ -9,90 +9,85 @@ import * as THREE from "three";
 import SolarSystemBackground from "@/components/3d/SolarSystemBackground";
 import SkillsHologram from "@/components/3d/SkillsHologram";
 import { projectsData } from "@/lib/projectsData";
+import { useScene3D } from "@/hooks/useScene3D";
 
-export default function Experience({ onProjectClick, dpr = 1.5 }: { onProjectClick?: (projectId: string) => void, dpr?: number }) {
+interface ExperienceProps {
+    onProjectClick?: (projectId: string) => void;
+    dpr?: number;
+}
+
+export default function Experience({ onProjectClick, dpr = 1.5 }: ExperienceProps) {
     const scroll = useScroll();
     const { camera } = useThree();
+    const { config } = useScene3D();
     const timeline = useRef<gsap.core.Timeline | null>(null);
 
-    // Refs for objects to animate
     // Refs for objects to animate
     const heroRef = useRef<THREE.Group>(null);
     const projectsGroupRef = useRef<THREE.Group>(null);
 
     useLayoutEffect(() => {
+        if (!config) return;
+        
         timeline.current = gsap.timeline({
             paused: true,
             defaults: { ease: "power1.inOut" }
         });
 
-        // Initial Camera State (Hero)
-        // Position: [0, 3, 18], LookAt: [0, 0, 0] - Zoomed closer view of Solar System
-
+        // Initial Camera State - Hero position
         // 0 -> 0.33 (Hero to Skills)
         timeline.current
             .to(camera.position, {
-                x: 0,
-                y: 0,
-                z: 6, // Very close-up view of skills hologram
+                x: config.skills.position[0],
+                y: config.skills.position[1],
+                z: config.skills.position[2],
                 duration: 1
-            }, 0)
-            .to(camera.rotation, {
             }, 0);
 
         // 0.33 -> 0.66 (Skills to Projects)
         timeline.current
             .to(camera.position, {
-                x: 0,
-                y: -5,
-                z: 30, // Keep distance to see background
+                x: config.projects.position[0],
+                y: config.projects.position[1],
+                z: config.projects.position[2],
                 duration: 1
             }, 1);
 
         // 0.66 -> 1.0 (Projects to Contact)
         timeline.current
             .to(camera.position, {
-                x: 0,
-                y: 5,
-                z: 20,
+                x: config.contact.position[0],
+                y: config.contact.position[1],
+                z: config.contact.position[2],
                 duration: 1
             }, 2);
 
         return () => {
             timeline.current?.kill();
         };
-    }, [camera]);
+    }, [camera, config]);
 
     useFrame(() => {
         if (timeline.current) {
-            // Sync GSAP timeline with scroll offset
-            // scroll.offset is 0 to 1
-            // timeline duration is 3 seconds (3 sections)
             const t = scroll.offset * timeline.current.duration();
             timeline.current.seek(t);
 
-            // Toggle visibility of projects based on timeline position
-            // Projects are focused at t=2 (range 1.5 to 2.5)
-            // DEBUG: Removed visibility logic to verify rendering
             if (projectsGroupRef.current) {
                 projectsGroupRef.current.visible = true;
             }
         }
 
-        // Dynamic LookAt logic based on scroll sections
-        // This ensures the camera always points at the interesting subject
+        // Dynamic LookAt based on scroll sections and config
+        if (!config) return;
+        
         if (scroll.offset < 0.33) {
-            // Hero: Look at center
-            camera.lookAt(0, 0, 0);
+            camera.lookAt(...config.hero.lookAt);
         } else if (scroll.offset < 0.66) {
-            // Skills: Still looking at center, but from side
-            camera.lookAt(0, 0, 0);
+            camera.lookAt(...config.skills.lookAt);
         } else if (scroll.offset < 0.9) {
-            // Projects: Look at cards (at z=0, camera at z=8)
-            camera.lookAt(0, 0, 0); // Look at the cards at origin
+            camera.lookAt(...config.projects.lookAt);
         } else {
-            // Contact: Look up slightly
-            camera.lookAt(0, 10, 20);
+            camera.lookAt(...config.contact.lookAt);
         }
     });
 

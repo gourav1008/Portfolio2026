@@ -1,6 +1,7 @@
 "use client";
 
 import { useStore } from "@/hooks/useStore";
+import { useResponsive } from "@/hooks/useResponsive";
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { projectsData } from "@/lib/projectsData";
@@ -25,6 +26,7 @@ const ProjectModal = dynamic(() => import("@/components/ui/ProjectModal"), {
 
 export default function Home() {
     const { selectedProjectId, isLoaded } = useStore();
+    const { isMobile } = useResponsive();
 
     const selectedProject = selectedProjectId
         ? projectsData.find(p => p.id === selectedProjectId) || null
@@ -53,18 +55,23 @@ export default function Home() {
             <div className="relative z-[15] w-full">
 
                 {/* Section 1: Hero (Handled by HUD TypingHeader) */}
-                <section id="hero" className="h-screen pointer-events-none" />
+                <section id="hero" className={`${isMobile ? 'min-h-screen' : 'h-screen'} pointer-events-none flex justify-center`}>
+                    <div className="text-center px-4 sm:px-8 pointer-events-auto hidden lg:block">
+                        <h1 className="text-2xl sm:text-4xl lg:text-6xl font-light mt-40">Welcome to My Portfolio</h1>
+                        <p className="text-xs sm:text-base text-gray-400">Explore my projects and skills</p>
+                    </div>
+                </section>
 
                 {/* Section 2: About */}
-                <section id="about" className="h-screen flex items-center justify-start px-8 md:px-20 pointer-events-none">
-                    <div className="max-w-2xl pointer-events-auto">
+                <section id="about" className={`${isMobile ? 'min-h-screen' : 'h-screen'} flex items-center justify-start px-4 sm:px-8 md:px-20 pointer-events-none`}>
+                    <div className="w-full max-w-2xl pointer-events-auto">
                         <AboutCard />
                     </div>
                 </section>
 
                 {/* Section 3: Skills (Handled by 3D Scene) */}
-                <section id="skills" className="h-screen flex items-center justify-end px-8 md:px-20 md:mr-10 pointer-events-none">
-                    <div className="text-right max-w-md pointer-events-auto">
+                <section id="skills" className={`${isMobile ? 'min-h-screen' : 'h-screen'} flex items-center ${isMobile ? 'justify-center' : 'justify-end'} px-4 sm:px-8 md:px-20 md:mr-10 pointer-events-none`}>
+                    <div className={`${isMobile ? 'text-center' : 'text-right'} w-full max-w-md pointer-events-auto`}>
                         <WorkshopCard />
                     </div>
                 </section>
@@ -73,13 +80,13 @@ export default function Home() {
                 <ProjectsSection />
 
                 {/* Section 5: Contact */}
-                <section id="contact" className="h-screen flex items-center justify-center pointer-events-none">
-                    <div className="pointer-events-auto w-full px-4">
-                        <div className="text-center mb-6">
-                            <h2 className="font-display text-4xl md:text-6xl font-bold text-white mb-2">
+                <section id="contact" className={`${isMobile ? 'min-h-screen' : 'h-screen'} flex items-center justify-center px-4 sm:px-8 pointer-events-none`}>
+                    <div className="pointer-events-auto w-full">
+                        <div className="text-center mb-6 sm:mb-8">
+                            <h2 className="font-display text-2xl sm:text-4xl lg:text-6xl font-bold text-white mb-2 sm:mb-4">
                                 INITIATE <span className="text-neon-pink">UPLINK</span>
                             </h2>
-                            <p className="text-gray-400 max-w-md mx-auto">
+                            <p className="text-gray-400 text-xs sm:text-sm max-w-md mx-auto px-2">
                                 Ready to bring your vision to life? Establish a connection below.
                             </p>
                         </div>

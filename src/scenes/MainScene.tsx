@@ -4,8 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import {
     PerformanceMonitor,
     Environment,
-    ScrollControls,
-    Stats
+    ScrollControls
 } from "@react-three/drei";
 import { Suspense, useState, useRef } from "react";
 import { EffectComposer, Bloom, ChromaticAberration, GodRays } from "@react-three/postprocessing";
@@ -14,10 +13,12 @@ import * as THREE from "three";
 import Experience from "./Experience";
 
 import { useStore } from "@/hooks/useStore";
+import { useScene3D } from "@/hooks/useScene3D";
 
 export default function MainScene() {
     const { setSelectedProjectId } = useStore();
-    const [dpr, setDpr] = useState(1.5);
+    const { config } = useScene3D();
+    const [dpr, setDpr] = useState(config.performance.dpr);
     const sunRef = useRef<THREE.Mesh>(null);
 
     return (
@@ -26,17 +27,17 @@ export default function MainScene() {
             dpr={dpr}
             gl={{ antialias: false, powerPreference: "high-performance" }}
             shadows
-            camera={{ position: [0, 3, 18], fov: 50 }}
+            camera={{ position: config.hero.position, fov: config.hero.fov }}
         >
             <Suspense fallback={null}>
                 <PerformanceMonitor
-                    onDecline={() => setDpr(0.5)}
-                    onIncline={() => setDpr(1.5)}
+                    onDecline={() => setDpr(config.performance.dpr * 0.75)}
+                    onIncline={() => setDpr(config.performance.dpr)}
                     flipflops={3}
-                    onFallback={() => setDpr(0.5)}
+                    onFallback={() => setDpr(config.performance.dpr * 0.5)}
                 >
 
-                    <ScrollControls pages={5} damping={0.2}>
+                    <ScrollControls pages={config.scroll.pages} damping={config.scroll.damping}>
                         <Experience onProjectClick={setSelectedProjectId} dpr={dpr} />
                     </ScrollControls>
 
@@ -64,7 +65,7 @@ export default function MainScene() {
                             <Bloom
                                 luminanceThreshold={0.8}
                                 luminanceSmoothing={0.9}
-                                intensity={2.0}
+                                intensity={1.0}
                                 mipmapBlur
                             />
 
@@ -91,8 +92,7 @@ export default function MainScene() {
                         </>
                     </EffectComposer>
 
-                    {/* Debug */}
-                    <Stats />
+                    {/* Debug: FPS indicator removed for production builds */}
                 </PerformanceMonitor>
             </Suspense>
         </Canvas>
